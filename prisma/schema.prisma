@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum DecisionStatus {
+  PENDING
+  BOUGHT
+  SKIPPED
+}
+
+enum SavingGoal {
+  IKE
+  IKZE
+  INVESTMENTS
+  SAVINGS
+  OTHER
+}
+
+model PurchaseDecision {
+  id             String         @id @default(cuid())
+  productName    String
+  productUrl     String?
+  price          Decimal        @db.Decimal(12, 2)
+  coolingOffDays Int            @default(7)
+  decisionDate   DateTime
+  status         DecisionStatus @default(PENDING)
+
+  saving         Saving?
+
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+model Saving {
+  id         String           @id @default(cuid())
+  amount     Decimal          @db.Decimal(12, 2)
+  goal       SavingGoal
+
+  decisionId String           @unique
+  decision   PurchaseDecision @relation(fields: [decisionId], references: [id], onDelete: Cascade)
+
+  createdAt  DateTime         @default(now())
+}

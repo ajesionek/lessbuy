@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:18
+    container_name: lessbuy-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: lessbuy
+      POSTGRES_USER: lessbuy
+      POSTGRES_PASSWORD: lessbuy_dev_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - lessbuy_postgres_data:/var/lib/postgresql
+
+volumes:
+  lessbuy_postgres_data:
