@@ -3,7 +3,15 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function AddDecisionForm() {
+type SavingFormProps = {
+  decisionId: string;
+  productPrice: number;
+};
+
+export default function SavingForm({
+  decisionId,
+  productPrice,
+}: SavingFormProps) {
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
@@ -18,17 +26,16 @@ export default function AddDecisionForm() {
     const formData = new FormData(form);
 
     const data = {
-      productName: formData.get("productName"),
-      productUrl: formData.get("productUrl"),
-      price: formData.get("price"),
-      coolingOffDays: formData.get("coolingOffDays"),
+      decisionId,
+      amount: formData.get("amount"),
+      goal: formData.get("goal"),
     };
 
     setLoading(true);
     setMessage("");
 
     try {
-      const response = await fetch("/api/decisions", {
+      const response = await fetch("/api/savings", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -40,13 +47,10 @@ export default function AddDecisionForm() {
 
       if (!response.ok) {
         setMessage(
-          result.error || "Nie udało się dodać zakupu."
+          result.error || "Nie udało się zapisać oszczędności."
         );
         return;
       }
-
-      form.reset();
-      setMessage("Zakup został zapisany.");
 
       router.refresh();
     } catch {
@@ -57,108 +61,82 @@ export default function AddDecisionForm() {
   }
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold text-slate-900">
-          Dodaj planowany zakup
-        </h2>
+    <form
+      onSubmit={handleSubmit}
+      className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-5"
+    >
+      <div>
+        <p className="text-sm font-medium text-emerald-700">
+          Dobra decyzja
+        </p>
 
-        <p className="mt-1 text-sm text-slate-500">
-          Zapisz go teraz i wróć do decyzji za kilka dni.
+        <h4 className="mt-1 text-lg font-semibold text-slate-900">
+          Ile odkładasz zamiast tego zakupu?
+        </h4>
+      </div>
+
+      <div className="mt-5">
+        <label className="mb-2 block text-sm font-medium text-slate-700">
+          Kwota
+        </label>
+
+        <div className="relative">
+          <input
+            name="amount"
+            type="number"
+            min="0.01"
+            step="0.01"
+            max={productPrice}
+            defaultValue={productPrice}
+            required
+            className="w-full rounded-xl border border-emerald-300 bg-white px-4 py-3 pr-14 text-lg font-semibold text-slate-900 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
+          />
+
+          <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+            PLN
+          </span>
+        </div>
+
+        <p className="mt-2 text-xs text-slate-500">
+          Nie musisz odkładać całej wartości zakupu.
         </p>
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-5"
-      >
-        <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
-            Co chcesz kupić?
-          </label>
+      <div className="mt-5">
+        <label className="mb-2 block text-sm font-medium text-slate-700">
+          Gdzie odkładasz?
+        </label>
 
-          <input
-            name="productName"
-            type="text"
-            required
-            placeholder="np. Garmin Fenix 8"
-            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-200"
-          />
-        </div>
-
-        <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
-            Cena
-          </label>
-
-          <div className="relative">
-            <input
-              name="price"
-              type="number"
-              min="0.01"
-              step="0.01"
-              required
-              placeholder="4299"
-              className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 pr-14 text-slate-900 outline-none placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-200"
-            />
-
-            <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm text-slate-400">
-              PLN
-            </span>
-          </div>
-        </div>
-
-        <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
-            Link do produktu
-          </label>
-
-          <input
-            name="productUrl"
-            type="url"
-            placeholder="https://..."
-            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-200"
-          />
-
-          <p className="mt-2 text-xs text-slate-400">
-            Opcjonalnie
-          </p>
-        </div>
-
-        <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
-            Ile czasu chcesz sobie dać?
-          </label>
-
-          <select
-            name="coolingOffDays"
-            defaultValue="7"
-            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-200"
-          >
-            <option value="1">1 dzień</option>
-            <option value="3">3 dni</option>
-            <option value="7">7 dni</option>
-            <option value="14">14 dni</option>
-            <option value="30">30 dni</option>
-          </select>
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full rounded-xl bg-slate-900 px-4 py-3 font-semibold text-white shadow-sm hover:bg-slate-800 disabled:bg-slate-400"
+        <select
+          name="goal"
+          defaultValue="IKE"
+          className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-200"
         >
-          {loading
-            ? "Zapisywanie..."
-            : "Odłóż decyzję"}
-        </button>
+          <option value="IKE">IKE</option>
+          <option value="IKZE">IKZE</option>
+          <option value="INVESTMENTS">Inwestycje</option>
+          <option value="SAVINGS">
+            Konto oszczędnościowe
+          </option>
+          <option value="OTHER">Inny cel</option>
+        </select>
+      </div>
 
-        {message && (
-          <p className="rounded-lg bg-slate-50 px-4 py-3 text-center text-sm text-slate-600">
-            {message}
-          </p>
-        )}
-      </form>
-    </section>
+      <button
+        type="submit"
+        disabled={loading}
+        className="mt-5 w-full rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white shadow-sm hover:bg-emerald-700 disabled:bg-emerald-300"
+      >
+        {loading
+          ? "Zapisywanie..."
+          : "Zapisz oszczędność"}
+      </button>
+
+      {message && (
+        <p className="mt-3 rounded-lg bg-white px-4 py-3 text-center text-sm text-slate-600">
+          {message}
+        </p>
+      )}
+    </form>
   );
 }
