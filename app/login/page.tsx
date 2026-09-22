@@ -2,6 +2,7 @@ import AuthForm from "@/components/AuthForm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export default async function LoginPage() {
   const session = await auth.api.getSession({
@@ -9,21 +10,24 @@ export default async function LoginPage() {
   });
 
   if (session) {
-    redirect("/");
+    redirect("/dashboard");
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-6">
+    <main className="flex min-h-screen items-center justify-center bg-gray-50 p-6">
       <div className="w-full max-w-md">
-        <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold">LessBuy</h1>
+        <Link
+          href="/"
+          className="mb-8 block text-center text-4xl font-bold"
+        >
+          LessBuy
+        </Link>
 
-          <p className="mt-2 text-gray-500">
-            Wydawaj mniej. Odkładaj więcej.
-          </p>
-        </div>
+        <p className="mb-8 text-center text-gray-500">
+          Wydawaj mniej. Odkładaj więcej.
+        </p>
 
-        <AuthForm />
+        <AuthForm initialMode="login" />
       </div>
     </main>
   );
