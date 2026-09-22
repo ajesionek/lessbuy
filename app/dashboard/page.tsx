@@ -1,4 +1,5 @@
 import AddDecisionForm from "@/components/AddDecisionForm";
+import GoalForm from "@/components/GoalForm";
 import DecisionActions from "@/components/DecisionActions";
 import SavingForm from "@/components/SavingForm";
 import LogoutButton from "@/components/LogoutButton";
@@ -86,6 +87,33 @@ export default async function DashboardPage() {
       createdAt: "desc",
     },
   });
+
+  const goals = await prisma.goal.findMany({
+  where: {
+    userId: session.user.id,
+  },
+  include: {
+    savings: true,
+  },
+  orderBy: {
+    createdAt: "desc",
+  },
+});
+
+const goalOptions = goals.map((goal) => {
+  const currentAmount = goal.savings.reduce(
+    (sum, saving) => sum + Number(saving.amount),
+    0
+  );
+
+  return {
+    id: goal.id,
+    name: goal.name,
+    type: goal.type,
+    targetAmount: Number(goal.targetAmount),
+    currentAmount,
+  };
+});
 
   const totalSaved = decisions.reduce(
     (sum, decision) =>
@@ -363,6 +391,93 @@ export default async function DashboardPage() {
           </section>
         )}
 
+<section className="mb-10">
+  <div className="mb-5">
+    <h2 className="text-2xl font-bold">
+      Twoje cele
+    </h2>
+
+    <p className="mt-1 text-sm text-slate-500">
+      Pieniądze, których nie wydajesz, mogą pracować
+      na konkretny cel.
+    </p>
+  </div>
+
+  {goalOptions.length > 0 && (
+    <div className="mb-6 grid gap-4 md:grid-cols-2">
+      {goalOptions.map((goal) => {
+        const progress =
+          goal.targetAmount > 0
+            ? Math.min(
+                (goal.currentAmount /
+                  goal.targetAmount) *
+                  100,
+                100
+              )
+            : 0;
+
+        const remaining = Math.max(
+          goal.targetAmount - goal.currentAmount,
+          0
+        );
+
+        return (
+          <article
+            key={goal.id}
+            className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+                  {goal.type}
+                </p>
+
+                <h3 className="mt-1 text-lg font-semibold">
+                  {goal.name}
+                </h3>
+              </div>
+
+              <span className="text-sm font-semibold text-emerald-600">
+                {Math.round(progress)}%
+              </span>
+            </div>
+
+            <div className="mt-5">
+              <div className="mb-2 flex items-end justify-between">
+                <span className="text-2xl font-bold">
+                  {formatMoney(goal.currentAmount)}
+                </span>
+
+                <span className="text-sm text-slate-400">
+                  z {formatMoney(goal.targetAmount)}
+                </span>
+              </div>
+
+              <div className="h-3 overflow-hidden rounded-full bg-slate-100">
+                <div
+                  className="h-full rounded-full bg-emerald-500 transition-all"
+                  style={{
+                    width: `${progress}%`,
+                  }}
+                />
+              </div>
+
+              <p className="mt-3 text-xs text-slate-500">
+                Pozostało:{" "}
+                <strong>
+                  {formatMoney(remaining)}
+                </strong>
+              </p>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  )}
+
+  <GoalForm />
+</section>
+
         {/* DODAWANIE ZAKUPU */}
 
         <section className="mb-10">
@@ -530,8 +645,9 @@ export default async function DashboardPage() {
                     {decision.status === "SKIPPED" &&
                       !decision.saving && (
                         <SavingForm
-                          decisionId={decision.id}
-                          productPrice={price}
+                            decisionId={decision.id}
+                            productPrice={price}
+                            goals={goalOptions}
                         />
                       )}
                   </article>

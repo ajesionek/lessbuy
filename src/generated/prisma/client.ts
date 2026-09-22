@@ -62,6 +62,11 @@ export type Account = Prisma.AccountModel
  */
 export type Verification = Prisma.VerificationModel
 /**
+ * Model Goal
+ * 
+ */
+export type Goal = Prisma.GoalModel
+/**
  * Model PurchaseDecision
  * 
  */

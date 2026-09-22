@@ -27,3 +27,17 @@ export const SavingGoal = {
 } as const
 
 export type SavingGoal = (typeof SavingGoal)[keyof typeof SavingGoal]
+
+
+export const GoalType = {
+  IKE: 'IKE',
+  IKZE: 'IKZE',
+  INVESTMENTS: 'INVESTMENTS',
+  SAVINGS: 'SAVINGS',
+  EMERGENCY: 'EMERGENCY',
+  TRAVEL: 'TRAVEL',
+  CREDIT: 'CREDIT',
+  CUSTOM: 'CUSTOM'
+} as const
+
+export type GoalType = (typeof GoalType)[keyof typeof GoalType]

@@ -55,6 +55,7 @@ export const ModelName = {
   Session: 'Session',
   Account: 'Account',
   Verification: 'Verification',
+  Goal: 'Goal',
   PurchaseDecision: 'PurchaseDecision',
   Saving: 'Saving'
 } as const
@@ -133,6 +134,19 @@ export const VerificationScalarFieldEnum = {
 export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
 
 
+export const GoalScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  type: 'type',
+  targetAmount: 'targetAmount',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type GoalScalarFieldEnum = (typeof GoalScalarFieldEnum)[keyof typeof GoalScalarFieldEnum]
+
+
 export const PurchaseDecisionScalarFieldEnum = {
   id: 'id',
   productName: 'productName',
@@ -154,6 +168,7 @@ export const SavingScalarFieldEnum = {
   amount: 'amount',
   goal: 'goal',
   decisionId: 'decisionId',
+  goalId: 'goalId',
   createdAt: 'createdAt'
 } as const
 

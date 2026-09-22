@@ -39,6 +39,7 @@ export type SavingMinAggregateOutputType = {
   amount: runtime.Decimal | null
   goal: $Enums.SavingGoal | null
   decisionId: string | null
+  goalId: string | null
   createdAt: Date | null
 }
 
@@ -47,6 +48,7 @@ export type SavingMaxAggregateOutputType = {
   amount: runtime.Decimal | null
   goal: $Enums.SavingGoal | null
   decisionId: string | null
+  goalId: string | null
   createdAt: Date | null
 }
 
@@ -55,6 +57,7 @@ export type SavingCountAggregateOutputType = {
   amount: number
   goal: number
   decisionId: number
+  goalId: number
   createdAt: number
   _all: number
 }
@@ -73,6 +76,7 @@ export type SavingMinAggregateInputType = {
   amount?: true
   goal?: true
   decisionId?: true
+  goalId?: true
   createdAt?: true
 }
 
@@ -81,6 +85,7 @@ export type SavingMaxAggregateInputType = {
   amount?: true
   goal?: true
   decisionId?: true
+  goalId?: true
   createdAt?: true
 }
 
@@ -89,6 +94,7 @@ export type SavingCountAggregateInputType = {
   amount?: true
   goal?: true
   decisionId?: true
+  goalId?: true
   createdAt?: true
   _all?: true
 }
@@ -184,6 +190,7 @@ export type SavingGroupByOutputType = {
   amount: runtime.Decimal
   goal: $Enums.SavingGoal
   decisionId: string
+  goalId: string | null
   createdAt: Date
   _count: SavingCountAggregateOutputType | null
   _avg: SavingAvgAggregateOutputType | null
@@ -215,8 +222,10 @@ export type SavingWhereInput = {
   amount?: Prisma.DecimalFilter<"Saving"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   goal?: Prisma.EnumSavingGoalFilter<"Saving"> | $Enums.SavingGoal
   decisionId?: Prisma.StringFilter<"Saving"> | string
+  goalId?: Prisma.StringNullableFilter<"Saving"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Saving"> | Date | string
   decision?: Prisma.XOR<Prisma.PurchaseDecisionScalarRelationFilter, Prisma.PurchaseDecisionWhereInput>
+  targetGoal?: Prisma.XOR<Prisma.GoalNullableScalarRelationFilter, Prisma.GoalWhereInput> | null
 }
 
 export type SavingOrderByWithRelationInput = {
@@ -224,8 +233,10 @@ export type SavingOrderByWithRelationInput = {
   amount?: Prisma.SortOrder
   goal?: Prisma.SortOrder
   decisionId?: Prisma.SortOrder
+  goalId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   decision?: Prisma.PurchaseDecisionOrderByWithRelationInput
+  targetGoal?: Prisma.GoalOrderByWithRelationInput
 }
 
 export type SavingWhereUniqueInput = Prisma.AtLeast<{
@@ -236,8 +247,10 @@ export type SavingWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.SavingWhereInput | Prisma.SavingWhereInput[]
   amount?: Prisma.DecimalFilter<"Saving"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   goal?: Prisma.EnumSavingGoalFilter<"Saving"> | $Enums.SavingGoal
+  goalId?: Prisma.StringNullableFilter<"Saving"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Saving"> | Date | string
   decision?: Prisma.XOR<Prisma.PurchaseDecisionScalarRelationFilter, Prisma.PurchaseDecisionWhereInput>
+  targetGoal?: Prisma.XOR<Prisma.GoalNullableScalarRelationFilter, Prisma.GoalWhereInput> | null
 }, "id" | "decisionId">
 
 export type SavingOrderByWithAggregationInput = {
@@ -245,6 +258,7 @@ export type SavingOrderByWithAggregationInput = {
   amount?: Prisma.SortOrder
   goal?: Prisma.SortOrder
   decisionId?: Prisma.SortOrder
+  goalId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.SavingCountOrderByAggregateInput
   _avg?: Prisma.SavingAvgOrderByAggregateInput
@@ -261,6 +275,7 @@ export type SavingScalarWhereWithAggregatesInput = {
   amount?: Prisma.DecimalWithAggregatesFilter<"Saving"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   goal?: Prisma.EnumSavingGoalWithAggregatesFilter<"Saving"> | $Enums.SavingGoal
   decisionId?: Prisma.StringWithAggregatesFilter<"Saving"> | string
+  goalId?: Prisma.StringNullableWithAggregatesFilter<"Saving"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Saving"> | Date | string
 }
 
@@ -270,6 +285,7 @@ export type SavingCreateInput = {
   goal: $Enums.SavingGoal
   createdAt?: Date | string
   decision: Prisma.PurchaseDecisionCreateNestedOneWithoutSavingInput
+  targetGoal?: Prisma.GoalCreateNestedOneWithoutSavingsInput
 }
 
 export type SavingUncheckedCreateInput = {
@@ -277,6 +293,7 @@ export type SavingUncheckedCreateInput = {
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   goal: $Enums.SavingGoal
   decisionId: string
+  goalId?: string | null
   createdAt?: Date | string
 }
 
@@ -286,6 +303,7 @@ export type SavingUpdateInput = {
   goal?: Prisma.EnumSavingGoalFieldUpdateOperationsInput | $Enums.SavingGoal
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   decision?: Prisma.PurchaseDecisionUpdateOneRequiredWithoutSavingNestedInput
+  targetGoal?: Prisma.GoalUpdateOneWithoutSavingsNestedInput
 }
 
 export type SavingUncheckedUpdateInput = {
@@ -293,6 +311,7 @@ export type SavingUncheckedUpdateInput = {
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   goal?: Prisma.EnumSavingGoalFieldUpdateOperationsInput | $Enums.SavingGoal
   decisionId?: Prisma.StringFieldUpdateOperationsInput | string
+  goalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -301,6 +320,7 @@ export type SavingCreateManyInput = {
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   goal: $Enums.SavingGoal
   decisionId: string
+  goalId?: string | null
   createdAt?: Date | string
 }
 
@@ -316,7 +336,18 @@ export type SavingUncheckedUpdateManyInput = {
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   goal?: Prisma.EnumSavingGoalFieldUpdateOperationsInput | $Enums.SavingGoal
   decisionId?: Prisma.StringFieldUpdateOperationsInput | string
+  goalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type SavingListRelationFilter = {
+  every?: Prisma.SavingWhereInput
+  some?: Prisma.SavingWhereInput
+  none?: Prisma.SavingWhereInput
+}
+
+export type SavingOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type SavingNullableScalarRelationFilter = {
@@ -329,6 +360,7 @@ export type SavingCountOrderByAggregateInput = {
   amount?: Prisma.SortOrder
   goal?: Prisma.SortOrder
   decisionId?: Prisma.SortOrder
+  goalId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -341,6 +373,7 @@ export type SavingMaxOrderByAggregateInput = {
   amount?: Prisma.SortOrder
   goal?: Prisma.SortOrder
   decisionId?: Prisma.SortOrder
+  goalId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -349,11 +382,54 @@ export type SavingMinOrderByAggregateInput = {
   amount?: Prisma.SortOrder
   goal?: Prisma.SortOrder
   decisionId?: Prisma.SortOrder
+  goalId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type SavingSumOrderByAggregateInput = {
   amount?: Prisma.SortOrder
+}
+
+export type SavingCreateNestedManyWithoutTargetGoalInput = {
+  create?: Prisma.XOR<Prisma.SavingCreateWithoutTargetGoalInput, Prisma.SavingUncheckedCreateWithoutTargetGoalInput> | Prisma.SavingCreateWithoutTargetGoalInput[] | Prisma.SavingUncheckedCreateWithoutTargetGoalInput[]
+  connectOrCreate?: Prisma.SavingCreateOrConnectWithoutTargetGoalInput | Prisma.SavingCreateOrConnectWithoutTargetGoalInput[]
+  createMany?: Prisma.SavingCreateManyTargetGoalInputEnvelope
+  connect?: Prisma.SavingWhereUniqueInput | Prisma.SavingWhereUniqueInput[]
+}
+
+export type SavingUncheckedCreateNestedManyWithoutTargetGoalInput = {
+  create?: Prisma.XOR<Prisma.SavingCreateWithoutTargetGoalInput, Prisma.SavingUncheckedCreateWithoutTargetGoalInput> | Prisma.SavingCreateWithoutTargetGoalInput[] | Prisma.SavingUncheckedCreateWithoutTargetGoalInput[]
+  connectOrCreate?: Prisma.SavingCreateOrConnectWithoutTargetGoalInput | Prisma.SavingCreateOrConnectWithoutTargetGoalInput[]
+  createMany?: Prisma.SavingCreateManyTargetGoalInputEnvelope
+  connect?: Prisma.SavingWhereUniqueInput | Prisma.SavingWhereUniqueInput[]
+}
+
+export type SavingUpdateManyWithoutTargetGoalNestedInput = {
+  create?: Prisma.XOR<Prisma.SavingCreateWithoutTargetGoalInput, Prisma.SavingUncheckedCreateWithoutTargetGoalInput> | Prisma.SavingCreateWithoutTargetGoalInput[] | Prisma.SavingUncheckedCreateWithoutTargetGoalInput[]
+  connectOrCreate?: Prisma.SavingCreateOrConnectWithoutTargetGoalInput | Prisma.SavingCreateOrConnectWithoutTargetGoalInput[]
+  upsert?: Prisma.SavingUpsertWithWhereUniqueWithoutTargetGoalInput | Prisma.SavingUpsertWithWhereUniqueWithoutTargetGoalInput[]
+  createMany?: Prisma.SavingCreateManyTargetGoalInputEnvelope
+  set?: Prisma.SavingWhereUniqueInput | Prisma.SavingWhereUniqueInput[]
+  disconnect?: Prisma.SavingWhereUniqueInput | Prisma.SavingWhereUniqueInput[]
+  delete?: Prisma.SavingWhereUniqueInput | Prisma.SavingWhereUniqueInput[]
+  connect?: Prisma.SavingWhereUniqueInput | Prisma.SavingWhereUniqueInput[]
+  update?: Prisma.SavingUpdateWithWhereUniqueWithoutTargetGoalInput | Prisma.SavingUpdateWithWhereUniqueWithoutTargetGoalInput[]
+  updateMany?: Prisma.SavingUpdateManyWithWhereWithoutTargetGoalInput | Prisma.SavingUpdateManyWithWhereWithoutTargetGoalInput[]
+  deleteMany?: Prisma.SavingScalarWhereInput | Prisma.SavingScalarWhereInput[]
+}
+
+export type SavingUncheckedUpdateManyWithoutTargetGoalNestedInput = {
+  create?: Prisma.XOR<Prisma.SavingCreateWithoutTargetGoalInput, Prisma.SavingUncheckedCreateWithoutTargetGoalInput> | Prisma.SavingCreateWithoutTargetGoalInput[] | Prisma.SavingUncheckedCreateWithoutTargetGoalInput[]
+  connectOrCreate?: Prisma.SavingCreateOrConnectWithoutTargetGoalInput | Prisma.SavingCreateOrConnectWithoutTargetGoalInput[]
+  upsert?: Prisma.SavingUpsertWithWhereUniqueWithoutTargetGoalInput | Prisma.SavingUpsertWithWhereUniqueWithoutTargetGoalInput[]
+  createMany?: Prisma.SavingCreateManyTargetGoalInputEnvelope
+  set?: Prisma.SavingWhereUniqueInput | Prisma.SavingWhereUniqueInput[]
+  disconnect?: Prisma.SavingWhereUniqueInput | Prisma.SavingWhereUniqueInput[]
+  delete?: Prisma.SavingWhereUniqueInput | Prisma.SavingWhereUniqueInput[]
+  connect?: Prisma.SavingWhereUniqueInput | Prisma.SavingWhereUniqueInput[]
+  update?: Prisma.SavingUpdateWithWhereUniqueWithoutTargetGoalInput | Prisma.SavingUpdateWithWhereUniqueWithoutTargetGoalInput[]
+  updateMany?: Prisma.SavingUpdateManyWithWhereWithoutTargetGoalInput | Prisma.SavingUpdateManyWithWhereWithoutTargetGoalInput[]
+  deleteMany?: Prisma.SavingScalarWhereInput | Prisma.SavingScalarWhereInput[]
 }
 
 export type SavingCreateNestedOneWithoutDecisionInput = {
@@ -392,17 +468,73 @@ export type EnumSavingGoalFieldUpdateOperationsInput = {
   set?: $Enums.SavingGoal
 }
 
+export type SavingCreateWithoutTargetGoalInput = {
+  id?: string
+  amount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  goal: $Enums.SavingGoal
+  createdAt?: Date | string
+  decision: Prisma.PurchaseDecisionCreateNestedOneWithoutSavingInput
+}
+
+export type SavingUncheckedCreateWithoutTargetGoalInput = {
+  id?: string
+  amount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  goal: $Enums.SavingGoal
+  decisionId: string
+  createdAt?: Date | string
+}
+
+export type SavingCreateOrConnectWithoutTargetGoalInput = {
+  where: Prisma.SavingWhereUniqueInput
+  create: Prisma.XOR<Prisma.SavingCreateWithoutTargetGoalInput, Prisma.SavingUncheckedCreateWithoutTargetGoalInput>
+}
+
+export type SavingCreateManyTargetGoalInputEnvelope = {
+  data: Prisma.SavingCreateManyTargetGoalInput | Prisma.SavingCreateManyTargetGoalInput[]
+  skipDuplicates?: boolean
+}
+
+export type SavingUpsertWithWhereUniqueWithoutTargetGoalInput = {
+  where: Prisma.SavingWhereUniqueInput
+  update: Prisma.XOR<Prisma.SavingUpdateWithoutTargetGoalInput, Prisma.SavingUncheckedUpdateWithoutTargetGoalInput>
+  create: Prisma.XOR<Prisma.SavingCreateWithoutTargetGoalInput, Prisma.SavingUncheckedCreateWithoutTargetGoalInput>
+}
+
+export type SavingUpdateWithWhereUniqueWithoutTargetGoalInput = {
+  where: Prisma.SavingWhereUniqueInput
+  data: Prisma.XOR<Prisma.SavingUpdateWithoutTargetGoalInput, Prisma.SavingUncheckedUpdateWithoutTargetGoalInput>
+}
+
+export type SavingUpdateManyWithWhereWithoutTargetGoalInput = {
+  where: Prisma.SavingScalarWhereInput
+  data: Prisma.XOR<Prisma.SavingUpdateManyMutationInput, Prisma.SavingUncheckedUpdateManyWithoutTargetGoalInput>
+}
+
+export type SavingScalarWhereInput = {
+  AND?: Prisma.SavingScalarWhereInput | Prisma.SavingScalarWhereInput[]
+  OR?: Prisma.SavingScalarWhereInput[]
+  NOT?: Prisma.SavingScalarWhereInput | Prisma.SavingScalarWhereInput[]
+  id?: Prisma.StringFilter<"Saving"> | string
+  amount?: Prisma.DecimalFilter<"Saving"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  goal?: Prisma.EnumSavingGoalFilter<"Saving"> | $Enums.SavingGoal
+  decisionId?: Prisma.StringFilter<"Saving"> | string
+  goalId?: Prisma.StringNullableFilter<"Saving"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"Saving"> | Date | string
+}
+
 export type SavingCreateWithoutDecisionInput = {
   id?: string
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   goal: $Enums.SavingGoal
   createdAt?: Date | string
+  targetGoal?: Prisma.GoalCreateNestedOneWithoutSavingsInput
 }
 
 export type SavingUncheckedCreateWithoutDecisionInput = {
   id?: string
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   goal: $Enums.SavingGoal
+  goalId?: string | null
   createdAt?: Date | string
 }
 
@@ -427,12 +559,46 @@ export type SavingUpdateWithoutDecisionInput = {
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   goal?: Prisma.EnumSavingGoalFieldUpdateOperationsInput | $Enums.SavingGoal
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  targetGoal?: Prisma.GoalUpdateOneWithoutSavingsNestedInput
 }
 
 export type SavingUncheckedUpdateWithoutDecisionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   goal?: Prisma.EnumSavingGoalFieldUpdateOperationsInput | $Enums.SavingGoal
+  goalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type SavingCreateManyTargetGoalInput = {
+  id?: string
+  amount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  goal: $Enums.SavingGoal
+  decisionId: string
+  createdAt?: Date | string
+}
+
+export type SavingUpdateWithoutTargetGoalInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  goal?: Prisma.EnumSavingGoalFieldUpdateOperationsInput | $Enums.SavingGoal
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  decision?: Prisma.PurchaseDecisionUpdateOneRequiredWithoutSavingNestedInput
+}
+
+export type SavingUncheckedUpdateWithoutTargetGoalInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  goal?: Prisma.EnumSavingGoalFieldUpdateOperationsInput | $Enums.SavingGoal
+  decisionId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type SavingUncheckedUpdateManyWithoutTargetGoalInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  goal?: Prisma.EnumSavingGoalFieldUpdateOperationsInput | $Enums.SavingGoal
+  decisionId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -443,8 +609,10 @@ export type SavingSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   amount?: boolean
   goal?: boolean
   decisionId?: boolean
+  goalId?: boolean
   createdAt?: boolean
   decision?: boolean | Prisma.PurchaseDecisionDefaultArgs<ExtArgs>
+  targetGoal?: boolean | Prisma.Saving$targetGoalArgs<ExtArgs>
 }, ExtArgs["result"]["saving"]>
 
 export type SavingSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -452,8 +620,10 @@ export type SavingSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   amount?: boolean
   goal?: boolean
   decisionId?: boolean
+  goalId?: boolean
   createdAt?: boolean
   decision?: boolean | Prisma.PurchaseDecisionDefaultArgs<ExtArgs>
+  targetGoal?: boolean | Prisma.Saving$targetGoalArgs<ExtArgs>
 }, ExtArgs["result"]["saving"]>
 
 export type SavingSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -461,8 +631,10 @@ export type SavingSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   amount?: boolean
   goal?: boolean
   decisionId?: boolean
+  goalId?: boolean
   createdAt?: boolean
   decision?: boolean | Prisma.PurchaseDecisionDefaultArgs<ExtArgs>
+  targetGoal?: boolean | Prisma.Saving$targetGoalArgs<ExtArgs>
 }, ExtArgs["result"]["saving"]>
 
 export type SavingSelectScalar = {
@@ -470,30 +642,36 @@ export type SavingSelectScalar = {
   amount?: boolean
   goal?: boolean
   decisionId?: boolean
+  goalId?: boolean
   createdAt?: boolean
 }
 
-export type SavingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "amount" | "goal" | "decisionId" | "createdAt", ExtArgs["result"]["saving"]>
+export type SavingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "amount" | "goal" | "decisionId" | "goalId" | "createdAt", ExtArgs["result"]["saving"]>
 export type SavingInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   decision?: boolean | Prisma.PurchaseDecisionDefaultArgs<ExtArgs>
+  targetGoal?: boolean | Prisma.Saving$targetGoalArgs<ExtArgs>
 }
 export type SavingIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   decision?: boolean | Prisma.PurchaseDecisionDefaultArgs<ExtArgs>
+  targetGoal?: boolean | Prisma.Saving$targetGoalArgs<ExtArgs>
 }
 export type SavingIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   decision?: boolean | Prisma.PurchaseDecisionDefaultArgs<ExtArgs>
+  targetGoal?: boolean | Prisma.Saving$targetGoalArgs<ExtArgs>
 }
 
 export type $SavingPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Saving"
   objects: {
     decision: Prisma.$PurchaseDecisionPayload<ExtArgs>
+    targetGoal: Prisma.$GoalPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     amount: runtime.Decimal
     goal: $Enums.SavingGoal
     decisionId: string
+    goalId: string | null
     createdAt: Date
   }, ExtArgs["result"]["saving"]>
   composites: {}
@@ -890,6 +1068,7 @@ readonly fields: SavingFieldRefs;
 export interface Prisma__SavingClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   decision<T extends Prisma.PurchaseDecisionDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PurchaseDecisionDefaultArgs<ExtArgs>>): Prisma.Prisma__PurchaseDecisionClient<runtime.Types.Result.GetResult<Prisma.$PurchaseDecisionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  targetGoal<T extends Prisma.Saving$targetGoalArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Saving$targetGoalArgs<ExtArgs>>): Prisma.Prisma__GoalClient<runtime.Types.Result.GetResult<Prisma.$GoalPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -923,6 +1102,7 @@ export interface SavingFieldRefs {
   readonly amount: Prisma.FieldRef<"Saving", 'Decimal'>
   readonly goal: Prisma.FieldRef<"Saving", 'SavingGoal'>
   readonly decisionId: Prisma.FieldRef<"Saving", 'String'>
+  readonly goalId: Prisma.FieldRef<"Saving", 'String'>
   readonly createdAt: Prisma.FieldRef<"Saving", 'DateTime'>
 }
     
@@ -1322,6 +1502,25 @@ export type SavingDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Limit how many Savings to delete.
    */
   limit?: number
+}
+
+/**
+ * Saving.targetGoal
+ */
+export type Saving$targetGoalArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Goal
+   */
+  select?: Prisma.GoalSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Goal
+   */
+  omit?: Prisma.GoalOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GoalInclude<ExtArgs> | null
+  where?: Prisma.GoalWhereInput
 }
 
 /**
