@@ -7,21 +7,31 @@ type Props = {
   id: string;
 };
 
-export default function DecisionActions({ id }: Props) {
+export default function DecisionActions({
+  id,
+}: Props) {
   const router = useRouter();
+
   const [loading, setLoading] = useState(false);
 
-  async function updateDecision(status: "BOUGHT" | "SKIPPED") {
+  async function updateDecision(
+    status: "BOUGHT" | "SKIPPED"
+  ) {
     setLoading(true);
 
     try {
-      const response = await fetch(`/api/decisions/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status }),
-      });
+      const response = await fetch(
+        `/api/decisions/${id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            status,
+          }),
+        }
+      );
 
       if (!response.ok) {
         alert("Nie udało się zmienić decyzji.");
@@ -29,28 +39,38 @@ export default function DecisionActions({ id }: Props) {
       }
 
       router.refresh();
+    } catch {
+      alert("Nie udało się połączyć z serwerem.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="mt-4 flex gap-3">
-      <button
-        onClick={() => updateDecision("BOUGHT")}
-        disabled={loading}
-        className="rounded-lg border px-4 py-2"
-      >
-        Kupiłem
-      </button>
+    <div className="mt-5">
+      <p className="mb-3 text-sm font-medium text-slate-600">
+        Podjąłeś już decyzję?
+      </p>
 
-      <button
-        onClick={() => updateDecision("SKIPPED")}
-        disabled={loading}
-        className="rounded-lg bg-black px-4 py-2 text-white"
-      >
-        Nie kupuję
-      </button>
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <button
+          type="button"
+          onClick={() => updateDecision("BOUGHT")}
+          disabled={loading}
+          className="flex-1 rounded-xl border border-slate-300 bg-white px-5 py-3 font-medium text-slate-700 shadow-sm hover:bg-slate-50 disabled:opacity-50"
+        >
+          Kupiłem
+        </button>
+
+        <button
+          type="button"
+          onClick={() => updateDecision("SKIPPED")}
+          disabled={loading}
+          className="flex-1 rounded-xl bg-emerald-600 px-5 py-3 font-semibold text-white shadow-sm hover:bg-emerald-700 disabled:opacity-50"
+        >
+          Nie kupuję
+        </button>
+      </div>
     </div>
   );
 }

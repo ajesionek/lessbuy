@@ -3,15 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
-type Props = {
-  decisionId: string;
-  productPrice: number;
-};
-
-export default function SavingForm({
-  decisionId,
-  productPrice,
-}: Props) {
+export default function AddDecisionForm() {
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
@@ -26,16 +18,17 @@ export default function SavingForm({
     const formData = new FormData(form);
 
     const data = {
-      decisionId,
-      amount: formData.get("amount"),
-      goal: formData.get("goal"),
+      productName: formData.get("productName"),
+      productUrl: formData.get("productUrl"),
+      price: formData.get("price"),
+      coolingOffDays: formData.get("coolingOffDays"),
     };
 
     setLoading(true);
     setMessage("");
 
     try {
-      const response = await fetch("/api/savings", {
+      const response = await fetch("/api/decisions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -47,10 +40,13 @@ export default function SavingForm({
 
       if (!response.ok) {
         setMessage(
-          result.error || "Nie udało się zapisać."
+          result.error || "Nie udało się dodać zakupu."
         );
         return;
       }
+
+      form.reset();
+      setMessage("Zakup został zapisany.");
 
       router.refresh();
     } catch {
@@ -61,78 +57,108 @@ export default function SavingForm({
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="mt-5 rounded-xl bg-gray-50 p-5"
-    >
-      <h4 className="font-semibold">
-        Ile odkładasz zamiast tego zakupu?
-      </h4>
+    <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold text-slate-900">
+          Dodaj planowany zakup
+        </h2>
 
-      <div className="mt-4">
-        <label className="mb-2 block text-sm">
-          Kwota
-        </label>
-
-        <input
-          name="amount"
-          type="number"
-          min="0.01"
-          step="0.01"
-          max={productPrice}
-          defaultValue={productPrice}
-          required
-          className="w-full rounded-lg border bg-white p-3"
-        />
-      </div>
-
-      <div className="mt-4">
-        <label className="mb-2 block text-sm">
-          Gdzie odkładasz?
-        </label>
-
-        <select
-          name="goal"
-          defaultValue="IKE"
-          className="w-full rounded-lg border bg-white p-3"
-        >
-          <option value="IKE">
-            IKE
-          </option>
-
-          <option value="IKZE">
-            IKZE
-          </option>
-
-          <option value="INVESTMENTS">
-            Inwestycje
-          </option>
-
-          <option value="SAVINGS">
-            Konto oszczędnościowe
-          </option>
-
-          <option value="OTHER">
-            Inny cel
-          </option>
-        </select>
-      </div>
-
-      <button
-        type="submit"
-        disabled={loading}
-        className="mt-4 w-full rounded-lg bg-black p-3 text-white disabled:opacity-50"
-      >
-        {loading
-          ? "Zapisywanie..."
-          : "Zapisz oszczędność"}
-      </button>
-
-      {message && (
-        <p className="mt-3 text-sm">
-          {message}
+        <p className="mt-1 text-sm text-slate-500">
+          Zapisz go teraz i wróć do decyzji za kilka dni.
         </p>
-      )}
-    </form>
+      </div>
+
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-5"
+      >
+        <div>
+          <label className="mb-2 block text-sm font-medium text-slate-700">
+            Co chcesz kupić?
+          </label>
+
+          <input
+            name="productName"
+            type="text"
+            required
+            placeholder="np. Garmin Fenix 8"
+            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-200"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block text-sm font-medium text-slate-700">
+            Cena
+          </label>
+
+          <div className="relative">
+            <input
+              name="price"
+              type="number"
+              min="0.01"
+              step="0.01"
+              required
+              placeholder="4299"
+              className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 pr-14 text-slate-900 outline-none placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-200"
+            />
+
+            <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+              PLN
+            </span>
+          </div>
+        </div>
+
+        <div>
+          <label className="mb-2 block text-sm font-medium text-slate-700">
+            Link do produktu
+          </label>
+
+          <input
+            name="productUrl"
+            type="url"
+            placeholder="https://..."
+            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-200"
+          />
+
+          <p className="mt-2 text-xs text-slate-400">
+            Opcjonalnie
+          </p>
+        </div>
+
+        <div>
+          <label className="mb-2 block text-sm font-medium text-slate-700">
+            Ile czasu chcesz sobie dać?
+          </label>
+
+          <select
+            name="coolingOffDays"
+            defaultValue="7"
+            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-200"
+          >
+            <option value="1">1 dzień</option>
+            <option value="3">3 dni</option>
+            <option value="7">7 dni</option>
+            <option value="14">14 dni</option>
+            <option value="30">30 dni</option>
+          </select>
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full rounded-xl bg-slate-900 px-4 py-3 font-semibold text-white shadow-sm hover:bg-slate-800 disabled:bg-slate-400"
+        >
+          {loading
+            ? "Zapisywanie..."
+            : "Odłóż decyzję"}
+        </button>
+
+        {message && (
+          <p className="rounded-lg bg-slate-50 px-4 py-3 text-center text-sm text-slate-600">
+            {message}
+          </p>
+        )}
+      </form>
+    </section>
   );
 }

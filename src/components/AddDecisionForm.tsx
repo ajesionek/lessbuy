@@ -1,138 +1,179 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 
-export default function AddDecisionForm() {
-  const router = useRouter();
+type Props = {
+  initialMode?: "login" | "register";
+};
+
+export default function AuthForm({
+  initialMode = "login",
+}: Props) {
+  const [mode, setMode] =
+    useState<"login" | "register">(initialMode);
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(
+    event: FormEvent<HTMLFormElement>
+  ) {
     event.preventDefault();
 
-    const form = event.currentTarget;
+    const formData = new FormData(event.currentTarget);
 
-    const formData = new FormData(form);
-
-    const data = {
-      productName: formData.get("productName"),
-      productUrl: formData.get("productUrl"),
-      price: formData.get("price"),
-      coolingOffDays: formData.get("coolingOffDays"),
-    };
+    const name = String(formData.get("name") || "");
+    const email = String(formData.get("email") || "");
+    const password = String(formData.get("password") || "");
 
     setLoading(true);
     setMessage("");
 
     try {
-      const response = await fetch("/api/decisions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      if (mode === "register") {
+        const { error } = await authClient.signUp.email({
+          name,
+          email,
+          password,
+        });
 
-      const result = await response.json();
+        if (error) {
+          setMessage(
+            error.message || "Nie udało się utworzyć konta."
+          );
+          return;
+        }
 
-      if (!response.ok) {
-        setMessage(result.error || "Wystąpił błąd.");
+        window.location.href = "/onboarding";
         return;
       }
 
-      form.reset();
+      const { error } = await authClient.signIn.email({
+        email,
+        password,
+      });
 
-      setMessage("Dodano do listy.");
+      if (error) {
+        setMessage(
+          error.message || "Niepoprawny e-mail lub hasło."
+        );
+        return;
+      }
 
-      router.refresh();
+      window.location.href = "/dashboard";
     } catch {
-      setMessage("Nie udało się połączyć z serwerem.");
+      setMessage("Wystąpił błąd.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-5 rounded-xl border p-6"
-    >
-      <div>
-        <label className="mb-2 block font-medium">
-          Co chcesz kupić?
-        </label>
-
-        <input
-          name="productName"
-          type="text"
-          required
-          placeholder="np. Garmin Fenix 8"
-          className="w-full rounded-lg border p-3"
-        />
-      </div>
-
-      <div>
-        <label className="mb-2 block font-medium">
-          Cena
-        </label>
-
-        <input
-          name="price"
-          type="number"
-          min="0.01"
-          step="0.01"
-          required
-          placeholder="4299"
-          className="w-full rounded-lg border p-3"
-        />
-      </div>
-
-      <div>
-        <label className="mb-2 block font-medium">
-          Link do produktu
-        </label>
-
-        <input
-          name="productUrl"
-          type="url"
-          placeholder="https://..."
-          className="w-full rounded-lg border p-3"
-        />
-      </div>
-
-      <div>
-        <label className="mb-2 block font-medium">
-          Ile dni chcesz się zastanowić?
-        </label>
-
-        <select
-          name="coolingOffDays"
-          defaultValue="7"
-          className="w-full rounded-lg border p-3"
+    <div className="w-full max-w-md">
+      <div className="mb-6 flex rounded-xl bg-slate-100 p-1">
+        <button
+          type="button"
+          onClick={() => {
+            setMode("login");
+            setMessage("");
+          }}
+          className={`w-1/2 rounded-lg px-3 py-2.5 text-sm font-medium ${
+            mode === "login"
+              ? "bg-white text-slate-900 shadow-sm"
+              : "text-slate-500 hover:text-slate-900"
+          }`}
         >
-          <option value="1">1 dzień</option>
-          <option value="3">3 dni</option>
-          <option value="7">7 dni</option>
-          <option value="14">14 dni</option>
-          <option value="30">30 dni</option>
-        </select>
+          Logowanie
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            setMode("register");
+            setMessage("");
+          }}
+          className={`w-1/2 rounded-lg px-3 py-2.5 text-sm font-medium ${
+            mode === "register"
+              ? "bg-white text-slate-900 shadow-sm"
+              : "text-slate-500 hover:text-slate-900"
+          }`}
+        >
+          Rejestracja
+        </button>
       </div>
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full rounded-lg bg-black p-3 font-medium text-white disabled:opacity-50"
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
       >
-        {loading ? "Zapisywanie..." : "Odłóż decyzję"}
-      </button>
+        {mode === "register" && (
+          <div>
+            <label className="mb-2 block text-sm font-medium text-slate-700">
+              Nazwa
+            </label>
 
-      {message && (
-        <p className="text-center text-sm">
-          {message}
-        </p>
-      )}
-    </form>
+            <input
+              name="name"
+              required
+              placeholder="np. Arek"
+              className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-200"
+            />
+          </div>
+        )}
+
+        <div>
+          <label className="mb-2 block text-sm font-medium text-slate-700">
+            E-mail
+          </label>
+
+          <input
+            name="email"
+            type="email"
+            required
+            placeholder="email@example.com"
+            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-200"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block text-sm font-medium text-slate-700">
+            Hasło
+          </label>
+
+          <input
+            name="password"
+            type="password"
+            required
+            minLength={8}
+            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-200"
+          />
+
+          {mode === "register" && (
+            <p className="mt-2 text-xs text-slate-400">
+              Minimum 8 znaków
+            </p>
+          )}
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full rounded-xl bg-slate-900 px-4 py-3 font-semibold text-white shadow-sm hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400 disabled:bg-slate-400"
+        >
+          {loading
+            ? "Proszę czekać..."
+            : mode === "login"
+              ? "Zaloguj"
+              : "Utwórz konto"}
+        </button>
+
+        {message && (
+          <p className="rounded-lg bg-red-50 px-4 py-3 text-center text-sm text-red-700">
+            {message}
+          </p>
+        )}
+      </form>
+    </div>
   );
 }
