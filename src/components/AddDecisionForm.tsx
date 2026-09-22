@@ -1,17 +1,10 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
-type Props = {
-  initialMode?: "login" | "register";
-};
-
-export default function AuthForm({
-  initialMode = "login",
-}: Props) {
-  const [mode, setMode] =
-    useState<"login" | "register">(initialMode);
+export default function AddDecisionForm() {
+  const router = useRouter();
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -21,159 +14,146 @@ export default function AuthForm({
   ) {
     event.preventDefault();
 
-    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
 
-    const name = String(formData.get("name") || "");
-    const email = String(formData.get("email") || "");
-    const password = String(formData.get("password") || "");
+    const data = {
+      productName: formData.get("productName"),
+      productUrl: formData.get("productUrl"),
+      price: formData.get("price"),
+      coolingOffDays: formData.get("coolingOffDays"),
+    };
 
     setLoading(true);
     setMessage("");
 
     try {
-      if (mode === "register") {
-        const { error } = await authClient.signUp.email({
-          name,
-          email,
-          password,
-        });
-
-        if (error) {
-          setMessage(
-            error.message || "Nie udało się utworzyć konta."
-          );
-          return;
-        }
-
-        window.location.href = "/onboarding";
-        return;
-      }
-
-      const { error } = await authClient.signIn.email({
-        email,
-        password,
+      const response = await fetch("/api/decisions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
       });
 
-      if (error) {
+      const result = await response.json();
+
+      if (!response.ok) {
         setMessage(
-          error.message || "Niepoprawny e-mail lub hasło."
+          result.error || "Nie udało się dodać zakupu."
         );
         return;
       }
 
-      window.location.href = "/dashboard";
+      form.reset();
+      setMessage("Zakup został zapisany.");
+
+      router.refresh();
     } catch {
-      setMessage("Wystąpił błąd.");
+      setMessage("Nie udało się połączyć z serwerem.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="w-full max-w-md">
-      <div className="mb-6 flex rounded-xl bg-slate-100 p-1">
-        <button
-          type="button"
-          onClick={() => {
-            setMode("login");
-            setMessage("");
-          }}
-          className={`w-1/2 rounded-lg px-3 py-2.5 text-sm font-medium ${
-            mode === "login"
-              ? "bg-white text-slate-900 shadow-sm"
-              : "text-slate-500 hover:text-slate-900"
-          }`}
-        >
-          Logowanie
-        </button>
+    <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold text-slate-900">
+          Dodaj planowany zakup
+        </h2>
 
-        <button
-          type="button"
-          onClick={() => {
-            setMode("register");
-            setMessage("");
-          }}
-          className={`w-1/2 rounded-lg px-3 py-2.5 text-sm font-medium ${
-            mode === "register"
-              ? "bg-white text-slate-900 shadow-sm"
-              : "text-slate-500 hover:text-slate-900"
-          }`}
-        >
-          Rejestracja
-        </button>
+        <p className="mt-1 text-sm text-slate-500">
+          Zapisz go teraz i wróć do decyzji za kilka dni.
+        </p>
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
-      >
-        {mode === "register" && (
-          <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">
-              Nazwa
-            </label>
-
-            <input
-              name="name"
-              required
-              placeholder="np. Arek"
-              className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-200"
-            />
-          </div>
-        )}
-
+      <form onSubmit={handleSubmit} className="space-y-5">
         <div>
           <label className="mb-2 block text-sm font-medium text-slate-700">
-            E-mail
+            Co chcesz kupić?
           </label>
 
           <input
-            name="email"
-            type="email"
+            name="productName"
+            type="text"
             required
-            placeholder="email@example.com"
+            placeholder="np. Garmin Fenix 8"
             className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-200"
           />
         </div>
 
         <div>
           <label className="mb-2 block text-sm font-medium text-slate-700">
-            Hasło
+            Cena
+          </label>
+
+          <div className="relative">
+            <input
+              name="price"
+              type="number"
+              min="0.01"
+              step="0.01"
+              required
+              placeholder="4299"
+              className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 pr-14 text-slate-900 outline-none placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-200"
+            />
+
+            <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+              PLN
+            </span>
+          </div>
+        </div>
+
+        <div>
+          <label className="mb-2 block text-sm font-medium text-slate-700">
+            Link do produktu
           </label>
 
           <input
-            name="password"
-            type="password"
-            required
-            minLength={8}
+            name="productUrl"
+            type="url"
+            placeholder="https://..."
             className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-200"
           />
 
-          {mode === "register" && (
-            <p className="mt-2 text-xs text-slate-400">
-              Minimum 8 znaków
-            </p>
-          )}
+          <p className="mt-2 text-xs text-slate-400">
+            Opcjonalnie
+          </p>
+        </div>
+
+        <div>
+          <label className="mb-2 block text-sm font-medium text-slate-700">
+            Ile czasu chcesz sobie dać?
+          </label>
+
+          <select
+            name="coolingOffDays"
+            defaultValue="7"
+            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-200"
+          >
+            <option value="1">1 dzień</option>
+            <option value="3">3 dni</option>
+            <option value="7">7 dni</option>
+            <option value="14">14 dni</option>
+            <option value="30">30 dni</option>
+          </select>
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-xl bg-slate-900 px-4 py-3 font-semibold text-white shadow-sm hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400 disabled:bg-slate-400"
+          className="w-full rounded-xl bg-slate-900 px-4 py-3 font-semibold text-white shadow-sm hover:bg-slate-800 disabled:bg-slate-400"
         >
-          {loading
-            ? "Proszę czekać..."
-            : mode === "login"
-              ? "Zaloguj"
-              : "Utwórz konto"}
+          {loading ? "Zapisywanie..." : "Odłóż decyzję"}
         </button>
 
         {message && (
-          <p className="rounded-lg bg-red-50 px-4 py-3 text-center text-sm text-red-700">
+          <p className="rounded-lg bg-slate-50 px-4 py-3 text-center text-sm text-slate-600">
             {message}
           </p>
         )}
       </form>
-    </div>
+    </section>
   );
 }
