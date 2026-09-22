@@ -1,8 +1,24 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export async function GET() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    return NextResponse.json(
+      { error: "Brak autoryzacji." },
+      { status: 401 }
+    );
+  }
+
   const decisions = await prisma.purchaseDecision.findMany({
+    where: {
+      userId: session.user.id,
+    },
     orderBy: {
       createdAt: "desc",
     },
@@ -13,6 +29,17 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session) {
+      return NextResponse.json(
+        { error: "Brak autoryzacji." },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
 
     const productName = body.productName?.trim();
@@ -58,6 +85,7 @@ export async function POST(request: Request) {
         price: price.toFixed(2),
         coolingOffDays,
         decisionDate,
+        userId: session.user.id,
       },
     });
 

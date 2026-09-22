@@ -44,6 +44,7 @@ export type PurchaseDecisionMinAggregateOutputType = {
   coolingOffDays: number | null
   decisionDate: Date | null
   status: $Enums.DecisionStatus | null
+  userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -56,6 +57,7 @@ export type PurchaseDecisionMaxAggregateOutputType = {
   coolingOffDays: number | null
   decisionDate: Date | null
   status: $Enums.DecisionStatus | null
+  userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -68,6 +70,7 @@ export type PurchaseDecisionCountAggregateOutputType = {
   coolingOffDays: number
   decisionDate: number
   status: number
+  userId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -92,6 +95,7 @@ export type PurchaseDecisionMinAggregateInputType = {
   coolingOffDays?: true
   decisionDate?: true
   status?: true
+  userId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -104,6 +108,7 @@ export type PurchaseDecisionMaxAggregateInputType = {
   coolingOffDays?: true
   decisionDate?: true
   status?: true
+  userId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -116,6 +121,7 @@ export type PurchaseDecisionCountAggregateInputType = {
   coolingOffDays?: true
   decisionDate?: true
   status?: true
+  userId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -215,6 +221,7 @@ export type PurchaseDecisionGroupByOutputType = {
   coolingOffDays: number
   decisionDate: Date
   status: $Enums.DecisionStatus
+  userId: string | null
   createdAt: Date
   updatedAt: Date
   _count: PurchaseDecisionCountAggregateOutputType | null
@@ -250,8 +257,10 @@ export type PurchaseDecisionWhereInput = {
   coolingOffDays?: Prisma.IntFilter<"PurchaseDecision"> | number
   decisionDate?: Prisma.DateTimeFilter<"PurchaseDecision"> | Date | string
   status?: Prisma.EnumDecisionStatusFilter<"PurchaseDecision"> | $Enums.DecisionStatus
+  userId?: Prisma.StringNullableFilter<"PurchaseDecision"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PurchaseDecision"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PurchaseDecision"> | Date | string
+  user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   saving?: Prisma.XOR<Prisma.SavingNullableScalarRelationFilter, Prisma.SavingWhereInput> | null
 }
 
@@ -263,8 +272,10 @@ export type PurchaseDecisionOrderByWithRelationInput = {
   coolingOffDays?: Prisma.SortOrder
   decisionDate?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  userId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  user?: Prisma.UserOrderByWithRelationInput
   saving?: Prisma.SavingOrderByWithRelationInput
 }
 
@@ -279,8 +290,10 @@ export type PurchaseDecisionWhereUniqueInput = Prisma.AtLeast<{
   coolingOffDays?: Prisma.IntFilter<"PurchaseDecision"> | number
   decisionDate?: Prisma.DateTimeFilter<"PurchaseDecision"> | Date | string
   status?: Prisma.EnumDecisionStatusFilter<"PurchaseDecision"> | $Enums.DecisionStatus
+  userId?: Prisma.StringNullableFilter<"PurchaseDecision"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PurchaseDecision"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PurchaseDecision"> | Date | string
+  user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   saving?: Prisma.XOR<Prisma.SavingNullableScalarRelationFilter, Prisma.SavingWhereInput> | null
 }, "id">
 
@@ -292,6 +305,7 @@ export type PurchaseDecisionOrderByWithAggregationInput = {
   coolingOffDays?: Prisma.SortOrder
   decisionDate?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  userId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.PurchaseDecisionCountOrderByAggregateInput
@@ -312,6 +326,7 @@ export type PurchaseDecisionScalarWhereWithAggregatesInput = {
   coolingOffDays?: Prisma.IntWithAggregatesFilter<"PurchaseDecision"> | number
   decisionDate?: Prisma.DateTimeWithAggregatesFilter<"PurchaseDecision"> | Date | string
   status?: Prisma.EnumDecisionStatusWithAggregatesFilter<"PurchaseDecision"> | $Enums.DecisionStatus
+  userId?: Prisma.StringNullableWithAggregatesFilter<"PurchaseDecision"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"PurchaseDecision"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"PurchaseDecision"> | Date | string
 }
@@ -326,6 +341,7 @@ export type PurchaseDecisionCreateInput = {
   status?: $Enums.DecisionStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  user?: Prisma.UserCreateNestedOneWithoutPurchaseDecisionsInput
   saving?: Prisma.SavingCreateNestedOneWithoutDecisionInput
 }
 
@@ -337,6 +353,7 @@ export type PurchaseDecisionUncheckedCreateInput = {
   coolingOffDays?: number
   decisionDate: Date | string
   status?: $Enums.DecisionStatus
+  userId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   saving?: Prisma.SavingUncheckedCreateNestedOneWithoutDecisionInput
@@ -352,6 +369,7 @@ export type PurchaseDecisionUpdateInput = {
   status?: Prisma.EnumDecisionStatusFieldUpdateOperationsInput | $Enums.DecisionStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneWithoutPurchaseDecisionsNestedInput
   saving?: Prisma.SavingUpdateOneWithoutDecisionNestedInput
 }
 
@@ -363,6 +381,7 @@ export type PurchaseDecisionUncheckedUpdateInput = {
   coolingOffDays?: Prisma.IntFieldUpdateOperationsInput | number
   decisionDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumDecisionStatusFieldUpdateOperationsInput | $Enums.DecisionStatus
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   saving?: Prisma.SavingUncheckedUpdateOneWithoutDecisionNestedInput
@@ -376,6 +395,7 @@ export type PurchaseDecisionCreateManyInput = {
   coolingOffDays?: number
   decisionDate: Date | string
   status?: $Enums.DecisionStatus
+  userId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -400,8 +420,19 @@ export type PurchaseDecisionUncheckedUpdateManyInput = {
   coolingOffDays?: Prisma.IntFieldUpdateOperationsInput | number
   decisionDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumDecisionStatusFieldUpdateOperationsInput | $Enums.DecisionStatus
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type PurchaseDecisionListRelationFilter = {
+  every?: Prisma.PurchaseDecisionWhereInput
+  some?: Prisma.PurchaseDecisionWhereInput
+  none?: Prisma.PurchaseDecisionWhereInput
+}
+
+export type PurchaseDecisionOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type PurchaseDecisionCountOrderByAggregateInput = {
@@ -412,6 +443,7 @@ export type PurchaseDecisionCountOrderByAggregateInput = {
   coolingOffDays?: Prisma.SortOrder
   decisionDate?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -429,6 +461,7 @@ export type PurchaseDecisionMaxOrderByAggregateInput = {
   coolingOffDays?: Prisma.SortOrder
   decisionDate?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -441,6 +474,7 @@ export type PurchaseDecisionMinOrderByAggregateInput = {
   coolingOffDays?: Prisma.SortOrder
   decisionDate?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -455,12 +489,46 @@ export type PurchaseDecisionScalarRelationFilter = {
   isNot?: Prisma.PurchaseDecisionWhereInput
 }
 
-export type StringFieldUpdateOperationsInput = {
-  set?: string
+export type PurchaseDecisionCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.PurchaseDecisionCreateWithoutUserInput, Prisma.PurchaseDecisionUncheckedCreateWithoutUserInput> | Prisma.PurchaseDecisionCreateWithoutUserInput[] | Prisma.PurchaseDecisionUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.PurchaseDecisionCreateOrConnectWithoutUserInput | Prisma.PurchaseDecisionCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.PurchaseDecisionCreateManyUserInputEnvelope
+  connect?: Prisma.PurchaseDecisionWhereUniqueInput | Prisma.PurchaseDecisionWhereUniqueInput[]
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
+export type PurchaseDecisionUncheckedCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.PurchaseDecisionCreateWithoutUserInput, Prisma.PurchaseDecisionUncheckedCreateWithoutUserInput> | Prisma.PurchaseDecisionCreateWithoutUserInput[] | Prisma.PurchaseDecisionUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.PurchaseDecisionCreateOrConnectWithoutUserInput | Prisma.PurchaseDecisionCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.PurchaseDecisionCreateManyUserInputEnvelope
+  connect?: Prisma.PurchaseDecisionWhereUniqueInput | Prisma.PurchaseDecisionWhereUniqueInput[]
+}
+
+export type PurchaseDecisionUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.PurchaseDecisionCreateWithoutUserInput, Prisma.PurchaseDecisionUncheckedCreateWithoutUserInput> | Prisma.PurchaseDecisionCreateWithoutUserInput[] | Prisma.PurchaseDecisionUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.PurchaseDecisionCreateOrConnectWithoutUserInput | Prisma.PurchaseDecisionCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.PurchaseDecisionUpsertWithWhereUniqueWithoutUserInput | Prisma.PurchaseDecisionUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.PurchaseDecisionCreateManyUserInputEnvelope
+  set?: Prisma.PurchaseDecisionWhereUniqueInput | Prisma.PurchaseDecisionWhereUniqueInput[]
+  disconnect?: Prisma.PurchaseDecisionWhereUniqueInput | Prisma.PurchaseDecisionWhereUniqueInput[]
+  delete?: Prisma.PurchaseDecisionWhereUniqueInput | Prisma.PurchaseDecisionWhereUniqueInput[]
+  connect?: Prisma.PurchaseDecisionWhereUniqueInput | Prisma.PurchaseDecisionWhereUniqueInput[]
+  update?: Prisma.PurchaseDecisionUpdateWithWhereUniqueWithoutUserInput | Prisma.PurchaseDecisionUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.PurchaseDecisionUpdateManyWithWhereWithoutUserInput | Prisma.PurchaseDecisionUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.PurchaseDecisionScalarWhereInput | Prisma.PurchaseDecisionScalarWhereInput[]
+}
+
+export type PurchaseDecisionUncheckedUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.PurchaseDecisionCreateWithoutUserInput, Prisma.PurchaseDecisionUncheckedCreateWithoutUserInput> | Prisma.PurchaseDecisionCreateWithoutUserInput[] | Prisma.PurchaseDecisionUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.PurchaseDecisionCreateOrConnectWithoutUserInput | Prisma.PurchaseDecisionCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.PurchaseDecisionUpsertWithWhereUniqueWithoutUserInput | Prisma.PurchaseDecisionUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.PurchaseDecisionCreateManyUserInputEnvelope
+  set?: Prisma.PurchaseDecisionWhereUniqueInput | Prisma.PurchaseDecisionWhereUniqueInput[]
+  disconnect?: Prisma.PurchaseDecisionWhereUniqueInput | Prisma.PurchaseDecisionWhereUniqueInput[]
+  delete?: Prisma.PurchaseDecisionWhereUniqueInput | Prisma.PurchaseDecisionWhereUniqueInput[]
+  connect?: Prisma.PurchaseDecisionWhereUniqueInput | Prisma.PurchaseDecisionWhereUniqueInput[]
+  update?: Prisma.PurchaseDecisionUpdateWithWhereUniqueWithoutUserInput | Prisma.PurchaseDecisionUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.PurchaseDecisionUpdateManyWithWhereWithoutUserInput | Prisma.PurchaseDecisionUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.PurchaseDecisionScalarWhereInput | Prisma.PurchaseDecisionScalarWhereInput[]
 }
 
 export type DecimalFieldUpdateOperationsInput = {
@@ -477,10 +545,6 @@ export type IntFieldUpdateOperationsInput = {
   decrement?: number
   multiply?: number
   divide?: number
-}
-
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
 }
 
 export type EnumDecisionStatusFieldUpdateOperationsInput = {
@@ -501,6 +565,74 @@ export type PurchaseDecisionUpdateOneRequiredWithoutSavingNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.PurchaseDecisionUpdateToOneWithWhereWithoutSavingInput, Prisma.PurchaseDecisionUpdateWithoutSavingInput>, Prisma.PurchaseDecisionUncheckedUpdateWithoutSavingInput>
 }
 
+export type PurchaseDecisionCreateWithoutUserInput = {
+  id?: string
+  productName: string
+  productUrl?: string | null
+  price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  coolingOffDays?: number
+  decisionDate: Date | string
+  status?: $Enums.DecisionStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  saving?: Prisma.SavingCreateNestedOneWithoutDecisionInput
+}
+
+export type PurchaseDecisionUncheckedCreateWithoutUserInput = {
+  id?: string
+  productName: string
+  productUrl?: string | null
+  price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  coolingOffDays?: number
+  decisionDate: Date | string
+  status?: $Enums.DecisionStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  saving?: Prisma.SavingUncheckedCreateNestedOneWithoutDecisionInput
+}
+
+export type PurchaseDecisionCreateOrConnectWithoutUserInput = {
+  where: Prisma.PurchaseDecisionWhereUniqueInput
+  create: Prisma.XOR<Prisma.PurchaseDecisionCreateWithoutUserInput, Prisma.PurchaseDecisionUncheckedCreateWithoutUserInput>
+}
+
+export type PurchaseDecisionCreateManyUserInputEnvelope = {
+  data: Prisma.PurchaseDecisionCreateManyUserInput | Prisma.PurchaseDecisionCreateManyUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type PurchaseDecisionUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.PurchaseDecisionWhereUniqueInput
+  update: Prisma.XOR<Prisma.PurchaseDecisionUpdateWithoutUserInput, Prisma.PurchaseDecisionUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.PurchaseDecisionCreateWithoutUserInput, Prisma.PurchaseDecisionUncheckedCreateWithoutUserInput>
+}
+
+export type PurchaseDecisionUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.PurchaseDecisionWhereUniqueInput
+  data: Prisma.XOR<Prisma.PurchaseDecisionUpdateWithoutUserInput, Prisma.PurchaseDecisionUncheckedUpdateWithoutUserInput>
+}
+
+export type PurchaseDecisionUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.PurchaseDecisionScalarWhereInput
+  data: Prisma.XOR<Prisma.PurchaseDecisionUpdateManyMutationInput, Prisma.PurchaseDecisionUncheckedUpdateManyWithoutUserInput>
+}
+
+export type PurchaseDecisionScalarWhereInput = {
+  AND?: Prisma.PurchaseDecisionScalarWhereInput | Prisma.PurchaseDecisionScalarWhereInput[]
+  OR?: Prisma.PurchaseDecisionScalarWhereInput[]
+  NOT?: Prisma.PurchaseDecisionScalarWhereInput | Prisma.PurchaseDecisionScalarWhereInput[]
+  id?: Prisma.StringFilter<"PurchaseDecision"> | string
+  productName?: Prisma.StringFilter<"PurchaseDecision"> | string
+  productUrl?: Prisma.StringNullableFilter<"PurchaseDecision"> | string | null
+  price?: Prisma.DecimalFilter<"PurchaseDecision"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  coolingOffDays?: Prisma.IntFilter<"PurchaseDecision"> | number
+  decisionDate?: Prisma.DateTimeFilter<"PurchaseDecision"> | Date | string
+  status?: Prisma.EnumDecisionStatusFilter<"PurchaseDecision"> | $Enums.DecisionStatus
+  userId?: Prisma.StringNullableFilter<"PurchaseDecision"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"PurchaseDecision"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"PurchaseDecision"> | Date | string
+}
+
 export type PurchaseDecisionCreateWithoutSavingInput = {
   id?: string
   productName: string
@@ -511,6 +643,7 @@ export type PurchaseDecisionCreateWithoutSavingInput = {
   status?: $Enums.DecisionStatus
   createdAt?: Date | string
   updatedAt?: Date | string
+  user?: Prisma.UserCreateNestedOneWithoutPurchaseDecisionsInput
 }
 
 export type PurchaseDecisionUncheckedCreateWithoutSavingInput = {
@@ -521,6 +654,7 @@ export type PurchaseDecisionUncheckedCreateWithoutSavingInput = {
   coolingOffDays?: number
   decisionDate: Date | string
   status?: $Enums.DecisionStatus
+  userId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -551,9 +685,61 @@ export type PurchaseDecisionUpdateWithoutSavingInput = {
   status?: Prisma.EnumDecisionStatusFieldUpdateOperationsInput | $Enums.DecisionStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneWithoutPurchaseDecisionsNestedInput
 }
 
 export type PurchaseDecisionUncheckedUpdateWithoutSavingInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  productName?: Prisma.StringFieldUpdateOperationsInput | string
+  productUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  coolingOffDays?: Prisma.IntFieldUpdateOperationsInput | number
+  decisionDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumDecisionStatusFieldUpdateOperationsInput | $Enums.DecisionStatus
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type PurchaseDecisionCreateManyUserInput = {
+  id?: string
+  productName: string
+  productUrl?: string | null
+  price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  coolingOffDays?: number
+  decisionDate: Date | string
+  status?: $Enums.DecisionStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type PurchaseDecisionUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  productName?: Prisma.StringFieldUpdateOperationsInput | string
+  productUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  coolingOffDays?: Prisma.IntFieldUpdateOperationsInput | number
+  decisionDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumDecisionStatusFieldUpdateOperationsInput | $Enums.DecisionStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  saving?: Prisma.SavingUpdateOneWithoutDecisionNestedInput
+}
+
+export type PurchaseDecisionUncheckedUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  productName?: Prisma.StringFieldUpdateOperationsInput | string
+  productUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  coolingOffDays?: Prisma.IntFieldUpdateOperationsInput | number
+  decisionDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumDecisionStatusFieldUpdateOperationsInput | $Enums.DecisionStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  saving?: Prisma.SavingUncheckedUpdateOneWithoutDecisionNestedInput
+}
+
+export type PurchaseDecisionUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   productName?: Prisma.StringFieldUpdateOperationsInput | string
   productUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -575,8 +761,10 @@ export type PurchaseDecisionSelect<ExtArgs extends runtime.Types.Extensions.Inte
   coolingOffDays?: boolean
   decisionDate?: boolean
   status?: boolean
+  userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  user?: boolean | Prisma.PurchaseDecision$userArgs<ExtArgs>
   saving?: boolean | Prisma.PurchaseDecision$savingArgs<ExtArgs>
 }, ExtArgs["result"]["purchaseDecision"]>
 
@@ -588,8 +776,10 @@ export type PurchaseDecisionSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   coolingOffDays?: boolean
   decisionDate?: boolean
   status?: boolean
+  userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  user?: boolean | Prisma.PurchaseDecision$userArgs<ExtArgs>
 }, ExtArgs["result"]["purchaseDecision"]>
 
 export type PurchaseDecisionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -600,8 +790,10 @@ export type PurchaseDecisionSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   coolingOffDays?: boolean
   decisionDate?: boolean
   status?: boolean
+  userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  user?: boolean | Prisma.PurchaseDecision$userArgs<ExtArgs>
 }, ExtArgs["result"]["purchaseDecision"]>
 
 export type PurchaseDecisionSelectScalar = {
@@ -612,20 +804,27 @@ export type PurchaseDecisionSelectScalar = {
   coolingOffDays?: boolean
   decisionDate?: boolean
   status?: boolean
+  userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type PurchaseDecisionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "productName" | "productUrl" | "price" | "coolingOffDays" | "decisionDate" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["purchaseDecision"]>
+export type PurchaseDecisionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "productName" | "productUrl" | "price" | "coolingOffDays" | "decisionDate" | "status" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["purchaseDecision"]>
 export type PurchaseDecisionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.PurchaseDecision$userArgs<ExtArgs>
   saving?: boolean | Prisma.PurchaseDecision$savingArgs<ExtArgs>
 }
-export type PurchaseDecisionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type PurchaseDecisionIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type PurchaseDecisionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.PurchaseDecision$userArgs<ExtArgs>
+}
+export type PurchaseDecisionIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.PurchaseDecision$userArgs<ExtArgs>
+}
 
 export type $PurchaseDecisionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "PurchaseDecision"
   objects: {
+    user: Prisma.$UserPayload<ExtArgs> | null
     saving: Prisma.$SavingPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -636,6 +835,7 @@ export type $PurchaseDecisionPayload<ExtArgs extends runtime.Types.Extensions.In
     coolingOffDays: number
     decisionDate: Date
     status: $Enums.DecisionStatus
+    userId: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["purchaseDecision"]>
@@ -1032,6 +1232,7 @@ readonly fields: PurchaseDecisionFieldRefs;
  */
 export interface Prisma__PurchaseDecisionClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  user<T extends Prisma.PurchaseDecision$userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PurchaseDecision$userArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   saving<T extends Prisma.PurchaseDecision$savingArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PurchaseDecision$savingArgs<ExtArgs>>): Prisma.Prisma__SavingClient<runtime.Types.Result.GetResult<Prisma.$SavingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1069,6 +1270,7 @@ export interface PurchaseDecisionFieldRefs {
   readonly coolingOffDays: Prisma.FieldRef<"PurchaseDecision", 'Int'>
   readonly decisionDate: Prisma.FieldRef<"PurchaseDecision", 'DateTime'>
   readonly status: Prisma.FieldRef<"PurchaseDecision", 'DecisionStatus'>
+  readonly userId: Prisma.FieldRef<"PurchaseDecision", 'String'>
   readonly createdAt: Prisma.FieldRef<"PurchaseDecision", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"PurchaseDecision", 'DateTime'>
 }
@@ -1325,6 +1527,10 @@ export type PurchaseDecisionCreateManyAndReturnArgs<ExtArgs extends runtime.Type
    */
   data: Prisma.PurchaseDecisionCreateManyInput | Prisma.PurchaseDecisionCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PurchaseDecisionIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1395,6 +1601,10 @@ export type PurchaseDecisionUpdateManyAndReturnArgs<ExtArgs extends runtime.Type
    * Limit how many PurchaseDecisions to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PurchaseDecisionIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1461,6 +1671,25 @@ export type PurchaseDecisionDeleteManyArgs<ExtArgs extends runtime.Types.Extensi
    * Limit how many PurchaseDecisions to delete.
    */
   limit?: number
+}
+
+/**
+ * PurchaseDecision.user
+ */
+export type PurchaseDecision$userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
 }
 
 /**

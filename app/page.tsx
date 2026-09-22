@@ -1,29 +1,38 @@
 import AddDecisionForm from "@/components/AddDecisionForm";
 import DecisionActions from "@/components/DecisionActions";
 import SavingForm from "@/components/SavingForm";
+import LogoutButton from "@/components/LogoutButton";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const decisions =
-    await prisma.purchaseDecision.findMany({
-      include: {
-        saving: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-  const savingSummary = await prisma.saving.aggregate({
-    _sum: {
-      amount: true,
+  if (!session) {
+    redirect("/login");
+  }
+
+  const decisions = await prisma.purchaseDecision.findMany({
+    where: {
+      userId: session.user.id,
+    },
+    include: {
+      saving: true,
+    },
+    orderBy: {
+      createdAt: "desc",
     },
   });
 
-  const totalSaved = Number(
-    savingSummary._sum.amount ?? 0
+  const totalSaved = decisions.reduce(
+    (sum, decision) => sum + Number(decision.saving?.amount ?? 0),
+    0
   );
 
   const skippedCount = decisions.filter(
@@ -40,14 +49,20 @@ export default async function Home() {
 
   return (
     <main className="mx-auto max-w-3xl p-6">
-      <header className="mb-10">
-        <h1 className="text-4xl font-bold">
-          LessBuy
-        </h1>
+      <header className="mb-10 flex items-start justify-between gap-5">
+        <div>
+          <h1 className="text-4xl font-bold">LessBuy</h1>
 
-        <p className="mt-2 text-gray-600">
-          Zanim kupisz, daj sobie czas.
-        </p>
+          <p className="mt-2 text-gray-600">
+            Zanim kupisz, daj sobie czas.
+          </p>
+
+          <p className="mt-1 text-sm text-gray-400">
+            {session.user.email}
+          </p>
+        </div>
+
+        <LogoutButton />
       </header>
 
       <section className="mb-10 grid gap-4 sm:grid-cols-2">
@@ -77,33 +92,18 @@ export default async function Home() {
 
       <section className="mb-10 grid grid-cols-2 gap-4 sm:grid-cols-3">
         <div className="rounded-xl border p-4">
-          <p className="text-sm text-gray-500">
-            Do decyzji
-          </p>
-
-          <strong className="text-xl">
-            {pendingCount}
-          </strong>
+          <p className="text-sm text-gray-500">Do decyzji</p>
+          <strong className="text-xl">{pendingCount}</strong>
         </div>
 
         <div className="rounded-xl border p-4">
-          <p className="text-sm text-gray-500">
-            Nie kupione
-          </p>
-
-          <strong className="text-xl">
-            {skippedCount}
-          </strong>
+          <p className="text-sm text-gray-500">Nie kupione</p>
+          <strong className="text-xl">{skippedCount}</strong>
         </div>
 
         <div className="rounded-xl border p-4">
-          <p className="text-sm text-gray-500">
-            Kupione
-          </p>
-
-          <strong className="text-xl">
-            {boughtCount}
-          </strong>
+          <p className="text-sm text-gray-500">Kupione</p>
+          <strong className="text-xl">{boughtCount}</strong>
         </div>
       </section>
 
@@ -155,8 +155,8 @@ export default async function Home() {
                       {decision.status === "PENDING"
                         ? "Czekam z decyzją"
                         : decision.status === "BOUGHT"
-                        ? "Kupione"
-                        : "Nie kupuję"}
+                          ? "Kupione"
+                          : "Nie kupuję"}
                     </span>
                   </div>
 
@@ -174,9 +174,7 @@ export default async function Home() {
                   )}
 
                   {decision.status === "PENDING" && (
-                    <DecisionActions
-                      id={decision.id}
-                    />
+                    <DecisionActions id={decision.id} />
                   )}
 
                   {decision.status === "SKIPPED" &&
@@ -203,8 +201,7 @@ export default async function Home() {
                       </p>
 
                       <p className="mt-1 text-sm">
-                        Cel:{" "}
-                        {decision.saving.goal}
+                        Cel: {decision.saving.goal}
                       </p>
                     </div>
                   )}

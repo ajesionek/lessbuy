@@ -1,11 +1,24 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export async function PATCH(
   request: Request,
   context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session) {
+      return NextResponse.json(
+        { error: "Brak autoryzacji." },
+        { status: 401 }
+      );
+    }
+
     const { id } = await context.params;
     const body = await request.json();
 
@@ -15,6 +28,20 @@ export async function PATCH(
       return NextResponse.json(
         { error: "Niepoprawny status." },
         { status: 400 }
+      );
+    }
+
+    const existing = await prisma.purchaseDecision.findFirst({
+      where: {
+        id,
+        userId: session.user.id,
+      },
+    });
+
+    if (!existing) {
+      return NextResponse.json(
+        { error: "Nie znaleziono decyzji." },
+        { status: 404 }
       );
     }
 

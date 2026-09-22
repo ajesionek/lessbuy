@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 const allowedGoals = [
   "IKE",
@@ -11,6 +13,17 @@ const allowedGoals = [
 
 export async function POST(request: Request) {
   try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session) {
+      return NextResponse.json(
+        { error: "Brak autoryzacji." },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
 
     const decisionId = body.decisionId;
@@ -38,15 +51,15 @@ export async function POST(request: Request) {
       );
     }
 
-    const decision =
-      await prisma.purchaseDecision.findUnique({
-        where: {
-          id: decisionId,
-        },
-        include: {
-          saving: true,
-        },
-      });
+    const decision = await prisma.purchaseDecision.findFirst({
+      where: {
+        id: decisionId,
+        userId: session.user.id,
+      },
+      include: {
+        saving: true,
+      },
+    });
 
     if (!decision) {
       return NextResponse.json(
@@ -67,10 +80,7 @@ export async function POST(request: Request) {
 
     if (decision.saving) {
       return NextResponse.json(
-        {
-          error:
-            "Dla tej decyzji oszczędność już istnieje.",
-        },
+        { error: "Dla tej decyzji oszczędność już istnieje." },
         { status: 409 }
       );
     }
@@ -93,10 +103,7 @@ export async function POST(request: Request) {
     console.error("Błąd zapisu oszczędności:", error);
 
     return NextResponse.json(
-      {
-        error:
-          "Nie udało się zapisać oszczędności.",
-      },
+      { error: "Nie udało się zapisać oszczędności." },
       { status: 500 }
     );
   }
