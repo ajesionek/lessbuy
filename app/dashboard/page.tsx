@@ -1,10 +1,16 @@
 import AddDecisionForm from "@/components/AddDecisionForm";
-import GoalForm from "@/components/GoalForm";
 import DecisionActions from "@/components/DecisionActions";
 import SavingForm from "@/components/SavingForm";
 import LogoutButton from "@/components/LogoutButton";
+import GoalForm from "@/components/GoalForm";
+
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import {
+  analyzeGoals,
+  pickBestGoal,
+} from "@/lib/goal-estimator";
+
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -114,6 +120,9 @@ const goalOptions = goals.map((goal) => {
     currentAmount,
   };
 });
+
+const goalAnalyses = analyzeGoals(goalOptions, 10);
+const bestGoal = pickBestGoal(goalAnalyses);
 
   const totalSaved = decisions.reduce(
     (sum, decision) =>
@@ -403,75 +412,166 @@ const goalOptions = goals.map((goal) => {
     </p>
   </div>
 
-  {goalOptions.length > 0 && (
-    <div className="mb-6 grid gap-4 md:grid-cols-2">
-      {goalOptions.map((goal) => {
-        const progress =
-          goal.targetAmount > 0
-            ? Math.min(
-                (goal.currentAmount /
-                  goal.targetAmount) *
-                  100,
-                100
-              )
-            : 0;
+  {bestGoal && (
+    <div className="relative mb-6 overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-800 p-6 text-white shadow-sm">
+      <div className="absolute -right-10 -top-10 h-36 w-36 rounded-full bg-white/10 blur-3xl" />
+      <div className="absolute -bottom-12 left-10 h-40 w-40 rounded-full bg-emerald-300/10 blur-3xl" />
 
-        const remaining = Math.max(
-          goal.targetAmount - goal.currentAmount,
-          0
-        );
+      <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm font-medium text-white/90">
+            <span className="text-lg">{bestGoal.icon}</span>
+            <span>Największy potencjał teraz</span>
+          </div>
 
-        return (
-          <article
-            key={goal.id}
-            className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
-                  {goal.type}
-                </p>
+          <h3 className="mt-4 text-2xl font-bold sm:text-3xl">
+            {bestGoal.name}
+          </h3>
 
-                <h3 className="mt-1 text-lg font-semibold">
-                  {goal.name}
-                </h3>
-              </div>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-white/80">
+            {bestGoal.description}
+          </p>
+        </div>
 
-              <span className="text-sm font-semibold text-emerald-600">
-                {Math.round(progress)}%
+        <div className="grid gap-3 sm:grid-cols-3">
+          <div className="rounded-2xl bg-white/10 px-4 py-4 backdrop-blur-sm">
+            <p className="text-xs text-white/70">
+              Szacowany efekt dla kolejnych 1000 zł
+            </p>
+            <p className="mt-2 text-xl font-bold">
+              {formatMoney(bestGoal.score)}
+            </p>
+          </div>
+
+          <div className="rounded-2xl bg-white/10 px-4 py-4 backdrop-blur-sm">
+            <p className="text-xs text-white/70">
+              Horyzont
+            </p>
+            <p className="mt-2 text-xl font-bold">
+              10 lat
+            </p>
+          </div>
+
+          <div className="rounded-2xl bg-white/10 px-4 py-4 backdrop-blur-sm">
+            <p className="text-xs text-white/70">
+              Założona roczna stopa
+            </p>
+            <p className="mt-2 text-xl font-bold">
+              {(bestGoal.annualReturn * 100).toFixed(0)}%
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )}
+
+  {goalAnalyses.length > 0 && (
+    <div className="mb-6 grid gap-4 lg:grid-cols-2">
+      {goalAnalyses.map((goal) => (
+        <article
+          key={goal.id}
+          className={`rounded-2xl border p-6 shadow-sm ${goal.cardClass}`}
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <span
+                className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${goal.badgeClass}`}
+              >
+                <span>{goal.icon}</span>
+                <span>{goal.type}</span>
+              </span>
+
+              <h3 className="mt-3 text-lg font-semibold text-slate-900">
+                {goal.name}
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                {goal.description}
+              </p>
+            </div>
+
+            <div className="text-right">
+              <p className="text-xs text-slate-500">
+                Potencjał
+              </p>
+              <p className="text-xl font-bold text-slate-900">
+                {formatMoney(goal.score)}
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <div className="mb-2 flex items-end justify-between">
+              <span className="text-2xl font-bold text-slate-900">
+                {formatMoney(goal.currentAmount)}
+              </span>
+
+              <span className="text-sm text-slate-500">
+                z {formatMoney(goal.targetAmount)}
               </span>
             </div>
 
-            <div className="mt-5">
-              <div className="mb-2 flex items-end justify-between">
-                <span className="text-2xl font-bold">
-                  {formatMoney(goal.currentAmount)}
-                </span>
+            <div className="h-3 overflow-hidden rounded-full bg-white/80">
+              <div
+                className={goal.barClass}
+                style={{
+                  width: `${goal.progress}%`,
+                  height: "100%",
+                }}
+              />
+            </div>
 
-                <span className="text-sm text-slate-400">
-                  z {formatMoney(goal.targetAmount)}
-                </span>
-              </div>
+            <div className="mt-3 flex items-center justify-between text-xs text-slate-600">
+              <span>
+                Postęp: {Math.round(goal.progress)}%
+              </span>
 
-              <div className="h-3 overflow-hidden rounded-full bg-slate-100">
-                <div
-                  className="h-full rounded-full bg-emerald-500 transition-all"
-                  style={{
-                    width: `${progress}%`,
-                  }}
-                />
-              </div>
+              <span>
+                Pozostało: {formatMoney(goal.remaining)}
+              </span>
+            </div>
+          </div>
 
-              <p className="mt-3 text-xs text-slate-500">
-                Pozostało:{" "}
-                <strong>
-                  {formatMoney(remaining)}
-                </strong>
+          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            <div className="rounded-xl bg-white/70 p-3">
+              <p className="text-xs text-slate-500">
+                Wzrost z 1000 zł
+              </p>
+              <p className="mt-1 font-semibold text-slate-900">
+                {formatMoney(goal.growthProfitPer1000)}
               </p>
             </div>
-          </article>
-        );
-      })}
+
+            <div className="rounded-xl bg-white/70 p-3">
+              <p className="text-xs text-slate-500">
+                Dodatkowa korzyść
+              </p>
+              <p className="mt-1 font-semibold text-slate-900">
+                {formatMoney(goal.extraBenefitPer1000)}
+              </p>
+            </div>
+
+            <div className="rounded-xl bg-white/70 p-3">
+              <p className="text-xs text-slate-500">
+                Wynik po 10 latach
+              </p>
+              <p className="mt-1 font-semibold text-slate-900">
+                {formatMoney(goal.projectedValuePer1000)}
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-5 flex items-end gap-2">
+            {[18, 28, 38, 52].map((height, index) => (
+              <div
+                key={index}
+                className={`w-3 rounded-full ${goal.barClass}`}
+                style={{ height: `${height}px` }}
+              />
+            ))}
+          </div>
+        </article>
+      ))}
     </div>
   )}
 
